@@ -7,6 +7,9 @@ import {
   ElementRef,
   OnDestroy,
 } from '@angular/core';
+import esriConfig from "@arcgis/core/config.js";
+esriConfig.assetsPath = "/lib/esri/assets";
+
 
 import MapView from '@arcgis/core/views/MapView';
 import Map from '@arcgis/core/Map';
@@ -51,7 +54,6 @@ export class AppComponent implements OnInit, OnDestroy {
         layers: [this.gisLayer]
       }
     );
-
 
 
 

@@ -368,3 +368,4 @@ FodyWeavers.xsd
 
 #merge request
 *.token
+/CoreAngular/wwwroot/lib/esri/assets
