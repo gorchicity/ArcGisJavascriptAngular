@@ -12,3 +12,6 @@ if (environment.production) {
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch(err => console.error(err));
+
+import esriConfig from "@arcgis/core/config.js";
+esriConfig.assetsPath = "/assets";
