@@ -1,3 +1,5 @@
+import { RegionModel } from './companies/companies.component';
+import MapImageLayer from '@arcgis/core/layers/MapImageLayer';
 import {
   Component,
   OnInit,
@@ -6,10 +8,18 @@ import {
   OnDestroy,
 } from '@angular/core';
 
-import WebMap from '@arcgis/core/WebMap';
 import MapView from '@arcgis/core/views/MapView';
+import Map from '@arcgis/core/Map';
 import Bookmarks from '@arcgis/core/widgets/Bookmarks';
 import Expand from '@arcgis/core/widgets/Expand';
+
+import Sublayer from '@arcgis/core/layers/support/Sublayer';
+
+import { MapLayerServiceService } from './services/map-layer-service.service';
+
+
+import LayerList from "@arcgis/core/widgets/LayerList"
+import Legend from "@arcgis/core/widgets/Legend"
 
 @Component({
   selector: 'app-root',
@@ -18,26 +28,42 @@ import Expand from '@arcgis/core/widgets/Expand';
 })
 export class AppComponent implements OnInit, OnDestroy {
   public view: any = null;
+  private gisLayer: MapImageLayer;
+  constructor(private imageLayerService: MapLayerServiceService) {
+    this.gisLayer = imageLayerService.getBaseLayer();
+  }
 
   // The <div> where we will place the map
   @ViewChild('mapViewNode', { static: true }) private mapViewEl!: ElementRef;
+  @ViewChild('mapLayerList', { static: true }) private mapLayerListEl!: ElementRef;
+  @ViewChild('mapLegend', { static: true }) private mapLegendEl!: ElementRef;
 
-  initializeMap(): Promise<any> {
+
+  async initializeMap(): Promise<any> {
     const container = this.mapViewEl.nativeElement;
 
-    const webmap = new WebMap({
-      portalItem: {
-        id: 'aa1d3f80270146208328cf66d022e09c',
-      },
-    });
+
+    await this.gisLayer.load();
+
+    const map = new Map(
+      {
+        basemap: "osm",
+        layers: [this.gisLayer]
+      }
+    );
+
+
+
 
     const view = new MapView({
-      container,
-      map: webmap
+      map: map,
+      extent: this.gisLayer.fullExtent,
+      container // Div element
     });
 
+
     const bookmarks = new Bookmarks({
-      view,
+      view: view,
       // allows bookmarks to be added, edited, or deleted
       editingEnabled: true,
     });
@@ -48,17 +74,21 @@ export class AppComponent implements OnInit, OnDestroy {
       expanded: true,
     });
 
+    let layerList = new LayerList({
+      container: this.mapLayerListEl.nativeElement,
+      view,
+      selectionEnabled: true
+    });
+    layerList.renderNow();
+
+    new Legend({
+      container: this.mapLegendEl.nativeElement,
+      view
+
+    })
+
     // Add the widget to the top-right corner of the view
     view.ui.add(bkExpand, 'top-right');
-
-    // bonus - how many bookmarks in the webmap?
-    webmap.when(() => {
-      if (webmap.bookmarks && webmap.bookmarks.length) {
-        console.log('Bookmarks: ', webmap.bookmarks.length);
-      } else {
-        console.log('No bookmarks in this webmap.');
-      }
-    });
 
     this.view = view;
     return this.view.when();
@@ -68,7 +98,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Initialize MapView and return an instance of MapView
     this.initializeMap().then(() => {
       // The map has been initialized
-        console.log('The map is ready.');
+      console.log('The map is ready.');
     });
   }
 
@@ -77,5 +107,11 @@ export class AppComponent implements OnInit, OnDestroy {
       // destroy the map view
       this.view.destroy();
     }
+  }
+
+  onCompaniesChange(data: RegionModel[]) {
+    let layer = this.gisLayer.sublayers.find(a => a.id == 5);
+    let regions = data.map(a => a.regionId).join(",");
+    layer.definitionExpression = `SDE.substat.COMPANYID IN (${regions})`;
   }
 }
