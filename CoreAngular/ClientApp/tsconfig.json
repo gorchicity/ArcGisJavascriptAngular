@@ -19,9 +19,12 @@
     "target": "es2017",
     "module": "es2020",
     "lib": [
+      "ESNext",
       "es2020",
       "dom"
-    ]
+    ],
+    "jsx": "react",
+    "jsxFactory": "tsx"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

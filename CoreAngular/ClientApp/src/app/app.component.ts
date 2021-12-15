@@ -22,6 +22,7 @@ import { MapLayerServiceService } from './services/map-layer-service.service';
 
 import LayerList from "@arcgis/core/widgets/LayerList"
 import Legend from "@arcgis/core/widgets/Legend"
+import RecenterWidget from "./widgets/recenterView"
 
 @Component({
   selector: 'app-root',
@@ -49,7 +50,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     const map = new Map(
       {
-        basemap: "osm",
+        //basemap: "osm",
         layers: [this.gisLayer]
       }
     );
@@ -61,6 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
       extent: this.gisLayer.fullExtent,
       container // Div element
     });
+    
 
 
     const bookmarks = new Bookmarks({
@@ -72,7 +74,7 @@ export class AppComponent implements OnInit, OnDestroy {
     const bkExpand = new Expand({
       view,
       content: bookmarks,
-      expanded: true,
+      expanded: false,
     });
 
     let layerList = new LayerList({
@@ -87,6 +89,9 @@ export class AppComponent implements OnInit, OnDestroy {
       view
 
     })
+
+    var recenterWidget = new RecenterWidget({view});
+    view.ui.add(recenterWidget,"top-left");
 
     // Add the widget to the top-right corner of the view
     view.ui.add(bkExpand, 'top-right');
