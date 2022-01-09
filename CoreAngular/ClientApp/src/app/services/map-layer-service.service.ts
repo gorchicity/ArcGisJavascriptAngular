@@ -9,7 +9,7 @@ import FeatureSet from "@arcgis/core/tasks/support/FeatureSet"
 })
 export class MapLayerServiceService {
 
-  private serviceUrl = "https://192.168.0.171:6443/arcgis/rest/services/sama_No_scale/MapServer";
+  private serviceUrl = "https://192.168.0.129:6443/arcgis/rest/services/NIMA_DEV/MapServer";
   private layer: MapImageLayer;
   constructor() {
     this.layer = this.initLayer();

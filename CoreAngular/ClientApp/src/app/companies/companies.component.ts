@@ -22,8 +22,8 @@ export class CompaniesComponent implements OnInit {
   async getCompanies() {
     let featureSet = await this.mapLayerServiceService.getSubLayerFeatures(72);
     featureSet.features.forEach((a, ind) => {
-      this.companies.push(new RegionModel(a.attributes["EDS_SDE.TBFC_REGIONS.REG_CODE"] as number,
-        a.attributes["EDS_SDE.TBFC_REGIONS.REG_NAME"].toString() as string,
+      this.companies.push(new RegionModel(a.attributes["EDS_SDE.TBFC_REGIONS_T.REG_CODE"] as number,
+        a.attributes["EDS_SDE.TBFC_REGIONS_T.REG_NAME"].toString() as string,
         true)
       );
 
